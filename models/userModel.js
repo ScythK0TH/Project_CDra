@@ -33,7 +33,7 @@ const UserModel = {
 
   findByUsername: username => {
     return client.execute(
-      'SELECT * FROM user_profiles.users WHERE username = ? ALLOW FILTERING',
+      'SELECT username FROM user_profiles.users WHERE username = ?',
       [username],
       {
         prepare: true,
@@ -43,7 +43,7 @@ const UserModel = {
 
   findByEmail: email => {
     return client.execute(
-      'SELECT * FROM user_profiles.users WHERE email = ? ALLOW FILTERING',
+      'SELECT email FROM user_profiles.users WHERE email = ?',
       [email],
       {
         prepare: true,
