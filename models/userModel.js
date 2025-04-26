@@ -99,6 +99,22 @@ const UserModel = {
     }
   },
 
+  getUserByUsername: async username => {
+    try {
+      const result = await client.execute(
+        'SELECT username, password FROM user_profiles.users WHERE username = ?',
+        [username],
+        {
+          prepare: true,
+        }
+      );
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching user by username:', err.message);
+      throw err;
+    }
+  },
+
   update: async (userId, username, password, newEmail, role_id) => {
     // Hash the password before storing it
     const hashedPassword = await bcrypt.hash(password, 10);

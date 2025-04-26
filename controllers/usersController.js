@@ -21,11 +21,28 @@ const UsersController = {
     }
   },
 
-  getAllUsers: async (req, res) => {
+  showLoginForm: (req, res) => {
+    res.render('auth/login', { errors: [] });
+  },
+
+  showAdminPage: async (req, res) => {
     try {
       const users = await UserModel.findAll();
+      const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
       // console.log('All Users:', users);
-      res.render('users/list', { users });
+      res.render('index', { users, roles });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  },
+
+  searchUser: async (req, res) => {
+    const { search } = req.query;
+    try {
+      const users = await UserModel.findAll();
+      const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
+      const filteredUsers = users.filter(user => user.username.includes(search) || user.email.includes(search));
+      res.render('index', { users: filteredUsers, roles });
     } catch (err) {
       res.status(500).send(err.message);
     }

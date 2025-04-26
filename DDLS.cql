@@ -48,3 +48,6 @@ VALUES (uuid(), 'john_doe', 'test1234', 'john@example.com', 1, toTimestamp(now()
 
 INSERT INTO user_profiles.users (user_id, username, password, email, role_id, created_at)
 VALUES (uuid(), 'jane_doe', 'test1234', 'jane@example.com', 2, toTimestamp(now()));
+
+INSERT INTO user_profiles.users (user_id, username, password, email, role_id, created_at) 
+VALUES (uuid(), 'admin', '$2b$10$wYxbz32cXsfbn4bNer7FTO55X4H70r0i5xEQl4aau1k8qYZaEpYpa', 'admin@example.com', 12, toTimestamp(now()));
