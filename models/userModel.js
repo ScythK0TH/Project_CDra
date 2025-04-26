@@ -1,71 +1,119 @@
 const { v4: uuidv4 } = require('uuid');
 const client = require('../db');
+const bcrypt = require('bcrypt');
 
 const UserModel = {
-  create: async (username, email) => {
+  create: async (username, email, password, role_id) => {
     const userId = uuidv4();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
       const query = `
-                INSERT INTO user_profiles.users (user_id, username, email, created_at)
-                VALUES (?, ?, ?, toTimestamp(now()));
+                INSERT INTO user_profiles.users (user_id, username, password, email, role_id, created_at)
+                VALUES (?, ?, ?, ?, ?, toTimestamp(now()));
             `;
 
-      const params = [userId, username, email];
+      const params = [userId, username, hashedPassword, email, role_id];
 
       await client.execute(query, params, { prepare: true });
-      return { userId, username, email };
+      return { userId, username, hashedPassword, email, role_id };
     } catch (err) {
       console.error('Error creating user:', err.message);
       throw err;
     }
   },
 
-  findAll: () => {
-    return client.execute('SELECT * FROM user_profiles.users');
+  getRoles: async () => {
+    try {
+      const query = 'SELECT * FROM user_profiles.roles';
+      const result = await client.execute(query);
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching roles:', err.message);
+      throw err;
+    }
   },
 
-  findById: id => {
-    return client.execute('SELECT * FROM user_profiles.users WHERE user_id = ?', [id], {
-      prepare: true,
-    });
+  getRolesById: async roleId => {
+    try {
+      const query = 'SELECT * FROM user_profiles.roles WHERE role_id = ?';
+      const result = await client.execute(query, [roleId], { prepare: true });
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching role by ID:', err.message);
+      throw err;
+    }
   },
 
-  findByUsername: username => {
-    return client.execute(
-      'SELECT username FROM user_profiles.users WHERE username = ?',
-      [username],
-      {
+  findAll: async () => {
+    try {
+      const result = await client.execute('SELECT * FROM user_profiles.users');
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching all users:', err.message);
+      throw err;
+    }
+  },
+
+  findById: async id => {
+    try {
+      const result = await client.execute('SELECT * FROM user_profiles.users WHERE user_id = ?', [id], {
         prepare: true,
-      }
-    );
+      });
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching user by ID:', err.message);
+      throw err;
+    }
   },
 
-  findByEmail: email => {
-    return client.execute(
-      'SELECT email FROM user_profiles.users WHERE email = ?',
-      [email],
-      {
-        prepare: true,
-      }
-    );
+  findByUsername: async username => {
+    try {
+      const result = await client.execute(
+        'SELECT username, email FROM user_profiles.users WHERE username = ?',
+        [username],
+        {
+          prepare: true,
+        }
+      );
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching user by username:', err.message);
+      throw err;
+    }
   },
 
-  update: async (userId, newEmail) => {
+  findByEmail: async email => {
+    try {
+      const result = await client.execute(
+        'SELECT email, username FROM user_profiles.users WHERE email = ?',
+        [email],
+        {
+          prepare: true,
+        }
+      );
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching user by email:', err.message);
+      throw err;
+    }
+  },
+
+  update: async (userId, newEmail, role_id) => {
     try {
       const query = `
                 UPDATE user_profiles.users
-                SET email = ?
+                SET email = ?, role_id = ?
                 WHERE user_id = ?;
             `;
 
-      const params = [newEmail, userId];
+      const params = [newEmail, role_id, userId];
 
       await client.execute(query, params, { prepare: true });
 
-      return { userId, newEmail };
+      return { userId, newEmail, role_id };
     } catch (err) {
-      console.error('Failed to update email:', err.message);
+      console.error('Failed to update email and role_id:', err.message);
       throw err;
     }
   },

@@ -12,7 +12,9 @@
       <div class="card-body">
         <h3 class="card-title"><%= user.username %></h3>
         <p class="card-text"><strong>Email:</strong> <%= user.email %></p>
-        <p class="card-text"><strong>Created At:</strong> <%= new Date(user.created_at).toLocaleString() %></p>
+        <p class="card-text"><strong>User ID:</strong> <%= user.user_id %></p>
+        <p class="card-text"><strong>Role:</strong> <%= user_role.role %></p>
+        <p class="card-text"><strong>Created At:</strong> <%= new Date(user.created_at).toLocaleString('en-GB', { hour12: false }) %></p>
       </div>
     </div>
 
