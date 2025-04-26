@@ -19,8 +19,8 @@ CREATE INDEX ON user_profiles.users (username);
 CREATE INDEX ON user_profiles.users (email);
 
 -- ใส่ข้อมูลทดลอง
-INSERT INTO user_profiles.users (user_id, username, email, created_at)
-VALUES (uuid(), 'john_doe', 'john@example.com', toTimestamp(now()));
+INSERT INTO user_profiles.users (user_id, username, password, email, created_at)
+VALUES (uuid(), 'john_doe', 'john@example.com', 'test1234', toTimestamp(now()));
 
-INSERT INTO user_profiles.users (user_id, username, email, created_at)
-VALUES (uuid(), 'jane_doe', 'jane@example.com', toTimestamp(now()));
+INSERT INTO user_profiles.users (user_id, username, password, email, created_at)
+VALUES (uuid(), 'jane_doe', 'jane@example.com', 'test1234', toTimestamp(now()));
