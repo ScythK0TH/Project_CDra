@@ -13,9 +13,9 @@ const UsersController = {
   },
 
   createRole: async (req, res) => {
-    const { role, description } = req.body;
+    const { role, description, role_id } = req.body;
     try {
-      await UserModel.createRole(role, description);
+      await UserModel.createRole(role, description, role_id);
       res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
     } catch (err) {
       res.status(500).json({ error: err.message });

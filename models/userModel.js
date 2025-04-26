@@ -23,16 +23,29 @@ const UserModel = {
     }
   },
 
-  createRole: async (role, description) => {
+  createRole: async (role, description, role_id) => {
     try {
-      // Get the current max role_id
-      const getMaxIdQuery = 'SELECT MAX(role_id) as max_id FROM user_profiles.roles';
-      const result = await client.execute(getMaxIdQuery);
-      let newRoleId = 1;
-      if (result.rows.length > 0 && result.rows[0].max_id !== null) {
-        newRoleId = result.rows[0].max_id + 1;
+      let newRoleId = null;
+
+      // If role_id is provided, check if it already exists
+      if (role_id) {
+        const checkQuery = 'SELECT role_id FROM user_profiles.roles WHERE role_id = ?';
+        const checkResult = await client.execute(checkQuery, [role_id], { prepare: true });
+        if (checkResult.rows.length === 0) {
+          newRoleId = role_id; // Not taken, use it
+        }
       }
-  
+
+      // If not provided or already taken, auto-increment
+      if (!newRoleId) {
+        const getMaxIdQuery = 'SELECT MAX(role_id) as max_id FROM user_profiles.roles';
+        const result = await client.execute(getMaxIdQuery);
+        newRoleId = 1;
+        if (result.rows.length > 0 && result.rows[0].max_id !== null) {
+          newRoleId = result.rows[0].max_id + 1;
+        }
+      }
+
       const insertQuery = `
         INSERT INTO user_profiles.roles (role_id, role, description)
         VALUES (?, ?, ?)
