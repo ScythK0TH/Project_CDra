@@ -1,18 +1,18 @@
--- สร้าง Keyspace
+-- Create Keyspace
 CREATE KEYSPACE IF NOT EXISTS user_profiles
 WITH replication = {
   'class': 'SimpleStrategy',
   'replication_factor': 1
 };
 
--- สร้าง Table roles
+-- Create Table roles
 CREATE TABLE IF NOT EXISTS user_profiles.roles (
   role_id INT PRIMARY KEY,
   role TEXT,
   description TEXT,
 );
 
--- สร้าง Table users
+-- Create Table users
 CREATE TABLE IF NOT EXISTS user_profiles.users (
   user_id UUID PRIMARY KEY,
   username TEXT,
@@ -22,27 +22,27 @@ CREATE TABLE IF NOT EXISTS user_profiles.users (
   created_at TIMESTAMP
 );
 
--- สร้าง Index
+-- Create Indexes
 CREATE INDEX ON user_profiles.users (username);
 CREATE INDEX ON user_profiles.users (email);
 CREATE INDEX ON user_profiles.users (role_id);
 CREATE INDEX ON user_profiles.roles (role);
 
--- ใส่ข้อมูลทดลอง สำหรับ roles
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (1, 'Intern Developer', 'ฝึกงาน ช่วยงานโปรเจกต์ต่าง ๆ');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (2, 'Junior Developer', 'พัฒนาโค้ดพื้นฐานตามสเปคที่ได้รับ');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (3, 'Developer', 'พัฒนาโค้ดตาม requirement ของทีม');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (4, 'Senior Developer', 'โค้ดระดับสูง ดูแลและช่วยเหลือทีมเล็ก');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (5, 'Tech Lead', 'ดูแลด้านเทคนิคทีม Dev และตัดสินใจเชิงเทคนิค');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (6, 'QA Engineer', 'ทดสอบและประกันคุณภาพซอฟต์แวร์');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (7, 'UI/UX Designer', 'ออกแบบหน้าจอและประสบการณ์ผู้ใช้ที่ดี');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (8, 'Backend Developer', 'พัฒนาและดูแลระบบฝั่งเซิร์ฟเวอร์และฐานข้อมูล');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (9, 'DevOps Engineer', 'ดูแลการ Deploy ระบบ และ Infrastructure');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (10, 'Project Manager', 'วางแผนและบริหารโครงการระหว่างทีม');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (11, 'Product Owner', 'วางแผน Feature และกำหนดทิศทาง Product');
-INSERT INTO user_profiles.roles (role_id, role, description) VALUES (12, 'CTO', 'ผู้นำด้านเทคโนโลยีของบริษัท ตัดสินใจเชิงกลยุทธ์');
+-- Sample data for roles
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (1, 'Intern Developer', 'Intern, assists with various projects');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (2, 'Junior Developer', 'Develops basic code according to given specs');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (3, 'Developer', 'Develops code according to team requirements');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (4, 'Senior Developer', 'Advanced coding, mentors and assists small teams');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (5, 'Tech Lead', 'Leads Dev team technically and makes technical decisions');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (6, 'QA Engineer', 'Tests and assures software quality');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (7, 'UI/UX Designer', 'Designs user interfaces and good user experiences');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (8, 'Backend Developer', 'Develops and maintains server-side and database systems');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (9, 'DevOps Engineer', 'Handles system deployment and infrastructure');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (10, 'Project Manager', 'Plans and manages projects across teams');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (11, 'Product Owner', 'Plans features and sets product direction');
+INSERT INTO user_profiles.roles (role_id, role, description) VALUES (12, 'CTO', 'Company technology leader, makes strategic decisions');
 
--- ใส่ข้อมูลทดลอง
+-- Sample data for users
 INSERT INTO user_profiles.users (user_id, username, password, email, role_id, created_at)
 VALUES (uuid(), 'john_doe', 'test1234', 'john@example.com', 1, toTimestamp(now()));
 

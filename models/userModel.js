@@ -23,6 +23,28 @@ const UserModel = {
     }
   },
 
+  createRole: async (role, description) => {
+    try {
+      // Get the current max role_id
+      const getMaxIdQuery = 'SELECT MAX(role_id) as max_id FROM user_profiles.roles';
+      const result = await client.execute(getMaxIdQuery);
+      let newRoleId = 1;
+      if (result.rows.length > 0 && result.rows[0].max_id !== null) {
+        newRoleId = result.rows[0].max_id + 1;
+      }
+  
+      const insertQuery = `
+        INSERT INTO user_profiles.roles (role_id, role, description)
+        VALUES (?, ?, ?)
+      `;
+      await client.execute(insertQuery, [newRoleId, role, description], { prepare: true });
+      return { role_id: newRoleId, role, description };
+    } catch (err) {
+      console.error('Error creating role:', err.message);
+      throw err;
+    }
+  },
+
   getRoles: async () => {
     try {
       const query = 'SELECT * FROM user_profiles.roles';
@@ -41,6 +63,17 @@ const UserModel = {
       return result.rows;
     } catch (err) {
       console.error('Error fetching role by ID:', err.message);
+      throw err;
+    }
+  },
+
+  getRolesByName: async roleName => {
+    try {
+      const query = 'SELECT * FROM user_profiles.roles WHERE role = ?';
+      const result = await client.execute(query, [roleName], { prepare: true });
+      return result.rows;
+    } catch (err) {
+      console.error('Error fetching role by name:', err.message);
       throw err;
     }
   },
@@ -136,6 +169,25 @@ const UserModel = {
     }
   },
 
+  updateRole: async (roleId, role, description) => {
+    try {
+      const query = `
+                UPDATE user_profiles.roles
+                SET role = ?, description = ?
+                WHERE role_id = ?;
+            `;
+
+      const params = [role, description, roleId];
+
+      await client.execute(query, params, { prepare: true });
+
+      return { roleId, role, description };
+    } catch (err) {
+      console.error('Failed to update role:', err.message);
+      throw err;
+    }
+  },
+
   updateWithoutPassword: async (userId, newEmail, username, role_id) => {
     try {
       const query = `
@@ -168,6 +220,23 @@ const UserModel = {
       return { deleted: true };
     } catch (err) {
       console.error('Error deleting user:', err.message);
+      throw err;
+    }
+  },
+
+  deleteRole: async roleId => {
+    try {
+      const query = `
+                DELETE FROM user_profiles.roles
+                WHERE role_id = ?;
+            `;
+
+      const params = [roleId];
+
+      await client.execute(query, params, { prepare: true });
+      return { deleted: true };
+    } catch (err) {
+      console.error('Error deleting role:', err.message);
       throw err;
     }
   },

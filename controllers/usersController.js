@@ -12,6 +12,16 @@ const UsersController = {
     }
   },
 
+  createRole: async (req, res) => {
+    const { role, description } = req.body;
+    try {
+      await UserModel.createRole(role, description);
+      res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
   showCreateForm: async (req, res) => {
     try {
       const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
@@ -36,13 +46,53 @@ const UsersController = {
     }
   },
 
+  showRoleForm: async (req, res) => {
+    try {
+      const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
+      res.render('users/role', { roles });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  },
+
+  showEditRoleForm: async (req, res) => {
+    try {
+      const role = await UserModel.getRolesById(req.params.id);
+      const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
+      if (role && role.length > 0) {
+        res.render('users/editRole', { role: role[0], roles });
+      } else {
+        res.status(404).send('Role not found');
+      }
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  },
+
   searchUser: async (req, res) => {
     const { search } = req.query;
+    // console.log('Search query:', search);
     try {
       const users = await UserModel.findAll();
       const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
       const filteredUsers = users.filter(user => user.username.includes(search) || user.email.includes(search));
       res.render('index', { users: filteredUsers, roles });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  },
+
+  filterUserByRole: async (req, res) => {
+    const { role_id } = req.query;
+    // console.log('Filter by role ID:', role_id);
+    try {
+      const users = await UserModel.findAll();
+      const roles = (await UserModel.getRoles()).sort((a, b) => a.role_id - b.role_id);
+      if (!role_id) {
+        return res.render('index', { users, roles, selectedRoleId: role_id });
+      }
+      const filteredUsers = users.filter(user => user.role_id === parseInt(role_id));
+      res.render('index', { users: filteredUsers, roles, selectedRoleId: role_id });
     } catch (err) {
       res.status(500).send(err.message);
     }
@@ -83,11 +133,33 @@ const UsersController = {
     // console.log('Update User:', userid, username, email);
     try {
       if (password) {
-        await UserModel.update(userid, email, username, password, role_id);
+        await UserModel.update(userid, username, password, email, role_id);
       } else {
         await UserModel.updateWithoutPassword(userid, email, username, role_id);
       }
       //res.json({ id: userid, username, email });
+      res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  updateRole: async (req, res) => {
+    const { role_id, role, description } = req.body;
+    // console.log('Update Role:', role_id, role);
+    try {
+      await UserModel.updateRole(role_id, role, description);
+      //res.json({ id: role_id, role });
+      res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  deleteRole: async (req, res) => {
+    try {
+      await UserModel.deleteRole(req.params.id);
+      //res.json({ message: 'Role deleted' });
       res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
     } catch (err) {
       res.status(500).json({ error: err.message });

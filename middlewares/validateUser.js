@@ -68,7 +68,7 @@ const validateUser = [
           email: req.body.email || '',
           password: req.body.password || '',
           cpassword: req.body.cpassword || '',
-          role: req.body.role_id || '',
+          role_id: req.body.role_id || '',
         },
         roles: roles,
       });
@@ -87,7 +87,7 @@ const validateUser = [
             email: req.body.email || '',
             password: req.body.password || '',
             cpassword: req.body.cpassword || '',
-            role: req.body.role_id || '',
+            role_id: req.body.role_id || '',
           },
           roles: roles,
         });
@@ -101,7 +101,7 @@ const validateUser = [
             email: req.body.email || '',
             password: req.body.password || '',
             cpassword: req.body.cpassword || '',
-            role: req.body.role_id || '',
+            role_id: req.body.role_id || '',
           },
           roles: roles,
         });
@@ -125,7 +125,7 @@ const validateUser = [
             email: req.body.email || '',
             password: req.body.password || '',
             cpassword: req.body.cpassword || '',
-            role: req.body.role_id || '',
+            role_id: req.body.role_id || '',
           },
           roles: roles,
         });
