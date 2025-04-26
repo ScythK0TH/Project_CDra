@@ -17,6 +17,11 @@ const validateEditUser = [
         .bail() // Stop further validation if this fails
         .isEmail()
         .withMessage('Invalid email format'),
+
+    body('password')
+        .optional({ checkFalsy: true }) // Skip if empty or not present
+        .isLength({ min: 8 })
+        .withMessage('Password must be at least 8 characters'),
     
     body('role_id')
         .trim()
@@ -38,29 +43,35 @@ const validateEditUser = [
 
         // If email is already exists
         const emailExists = await UserModel.findByEmail(req.body.email);
-        if (emailExists.length > 0 && emailExists[0].username !== req.body.username) {
+        if (emailExists.length > 0 && String(emailExists[0].user_id) !== String(req.body.userid)) {
             return res.render('users/edit', {
             errors: [{ msg: 'Email already exists' }],
             oldInput: {
                 email: req.body.email || '',
                 userid: req.body.userid || '',
-                username: req.body.username || ''
+                username: req.body.username || '',
+                password: req.body.password || '',
+                role_id: req.body.role_id || ''
             },
             roles: roles,
+            actionUrl: `/users/edit/${req.body.userid}`,
             });
         }
 
         // If username is already exists
         const usernameExists = await UserModel.findByUsername(req.body.username);
-        if (usernameExists.length > 0 && usernameExists[0].email !== req.body.email) {
+        if (usernameExists.length > 0 && String(usernameExists[0].user_id) !== String(req.body.userid)) {
             return res.render('users/edit', {
             errors: [{ msg: 'Username already exists' }],
             oldInput: {
                 email: req.body.email || '',
                 userid: req.body.userid || '',
-                username: req.body.username || ''
+                username: req.body.username || '',
+                password: req.body.password || '',
+                role_id: req.body.role_id || ''
             },
             roles: roles,
+            actionUrl: `/users/edit/${req.body.userid}`,
             });
         }
 
@@ -69,7 +80,18 @@ const validateEditUser = [
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render('users/edit', { user: req.body, roles, errors: errors.array() });
+            return res.render('users/edit', { 
+                oldInput: {
+                    email: req.body.email || '',
+                    userid: req.body.userid || '',
+                    username: req.body.username || '',
+                    password: req.body.password || '',
+                    role_id: req.body.role_id || ''
+                },
+                roles: roles,
+                errors: errors.array(),
+                actionUrl: `/users/edit/${req.body.userid}`,
+            });
         }
         
         next();

@@ -70,7 +70,7 @@ const UserModel = {
   findByUsername: async username => {
     try {
       const result = await client.execute(
-        'SELECT username, email FROM user_profiles.users WHERE username = ?',
+        'SELECT user_id, username FROM user_profiles.users WHERE username = ?',
         [username],
         {
           prepare: true,
@@ -86,7 +86,7 @@ const UserModel = {
   findByEmail: async email => {
     try {
       const result = await client.execute(
-        'SELECT email, username FROM user_profiles.users WHERE email = ?',
+        'SELECT user_id, email FROM user_profiles.users WHERE email = ?',
         [email],
         {
           prepare: true,
@@ -99,21 +99,42 @@ const UserModel = {
     }
   },
 
-  update: async (userId, newEmail, role_id) => {
+  update: async (userId, username, password, newEmail, role_id) => {
+    // Hash the password before storing it
+    const hashedPassword = await bcrypt.hash(password, 10);
     try {
       const query = `
                 UPDATE user_profiles.users
-                SET email = ?, role_id = ?
+                SET email = ?, role_id = ?, username = ?, password = ?
                 WHERE user_id = ?;
             `;
 
-      const params = [newEmail, role_id, userId];
+      const params = [newEmail, role_id, username, hashedPassword, userId];
 
       await client.execute(query, params, { prepare: true });
 
-      return { userId, newEmail, role_id };
+      return { userId, newEmail, username, hashedPassword, role_id };
     } catch (err) {
-      console.error('Failed to update email and role_id:', err.message);
+      console.error('Failed to update:', err.message);
+      throw err;
+    }
+  },
+
+  updateWithoutPassword: async (userId, newEmail, username, role_id) => {
+    try {
+      const query = `
+                UPDATE user_profiles.users
+                SET email = ?, role_id = ?, username = ?
+                WHERE user_id = ?;
+            `;
+
+      const params = [newEmail, role_id, username, userId];
+
+      await client.execute(query, params, { prepare: true });
+
+      return { userId, newEmail, username, role_id };
+    } catch (err) {
+      console.error('Failed to update without password:', err.message);
       throw err;
     }
   },

@@ -62,10 +62,14 @@ const UsersController = {
   },
 
   updateUser: async (req, res) => {
-    const { email, userid, role_id } = req.body;
+    const { email, username, password, userid, role_id } = req.body;
     // console.log('Update User:', userid, username, email);
     try {
-      await UserModel.update(userid, email, role_id);
+      if (password) {
+        await UserModel.update(userid, email, username, password, role_id);
+      } else {
+        await UserModel.updateWithoutPassword(userid, email, username, role_id);
+      }
       //res.json({ id: userid, username, email });
       res.redirect('/users'); // หรือจะส่ง JSON ก็ได้
     } catch (err) {

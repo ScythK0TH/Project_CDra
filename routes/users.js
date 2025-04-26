@@ -13,7 +13,7 @@ router.post('/', validateUser, UsersController.createUser);
 router.get('/', UsersController.getAllUsers);
 router.get('/:id', UsersController.getUserById);
 router.get('/edit/:id', UsersController.getUserByIdForEdit);
-router.post('/edit', validateEditUser, UsersController.updateUser);
+router.post('/edit/:id', validateEditUser, UsersController.updateUser);
 router.post('/delete/:id', UsersController.deleteUser);
 
 module.exports = router;
