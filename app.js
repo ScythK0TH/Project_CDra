@@ -5,6 +5,17 @@ const path = require('path');
 // Initialize Express app
 const app = express();
 
+// Set up session middleware
+app.use(session({
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
+// Set up static file serving
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Import routes
 const usersRouter = require('./routes/users');
 

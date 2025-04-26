@@ -1,0 +1,31 @@
+body.dark-mode {
+  background-color: #181a1b !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode .btn-close {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+.navbar-dark-mode {
+  background-color: #23272b !important;
+  color: #f8f9fa !important;
+}
+body.dark-mode {
+  background-color: #181a1b !important;
+  color: #f8f9fa !important;
+}
+.navbar-dark-mode {
+  background-color: #23272b !important;
+}
+.offcanvas.offcanvas-dark {
+  background-color: #23272b !important;
+  color: #f8f9fa !important;
+}
+.offcanvas.offcanvas-dark .offcanvas-title,
+.offcanvas.offcanvas-dark .nav-link {
+  color: #f8f9fa !important;
+}
+.offcanvas.offcanvas-dark .nav-link.active,
+.offcanvas.offcanvas-dark .nav-link:focus,
+.offcanvas.offcanvas-dark .nav-link:hover {
+  color: #ffc107 !important;
+}

@@ -1,0 +1,82 @@
+<link href="/css/navbar.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-3" id="mainNavbar">
+  <div class="d-flex align-items-center w-100">
+    <button
+      class="navbar-toggler me-3 d-block"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNavbar"
+      aria-controls="offcanvasNavbar"
+      title="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/">Employee Profile Management</a>
+    <button
+      id="darkModeToggle"
+      class="btn btn-outline-secondary btn-sm ms-auto"
+      type="button"
+      title="Toggle dark mode"
+    >
+      <span class="bi bi-moon"></span>
+      <span class="bi bi-sun" style="display: none"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Offcanvas sidebar -->
+<div
+  class="offcanvas offcanvas-start"
+  tabindex="-1"
+  id="offcanvasNavbar"
+  aria-labelledby="offcanvasNavbarLabel"
+>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link" href="/users">Users</a></li>
+      <li class="nav-item"><a class="nav-link" href="/users/new">Add User</a></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Dark mode toggle with localStorage
+  const toggleBtn = document.getElementById('darkModeToggle');
+  const body = document.body;
+  const navbar = document.getElementById('mainNavbar');
+  const offcanvas = document.getElementById('offcanvasNavbar');
+
+  function setDarkMode(on) {
+    if (on) {
+      body.classList.add('dark-mode');
+      navbar.classList.add('navbar-dark-mode', 'navbar-dark');
+      navbar.classList.remove('bg-light', 'navbar-light');
+      offcanvas.classList.add('offcanvas-dark');
+      toggleBtn.querySelector('.bi-moon').style.display = 'none';
+      toggleBtn.querySelector('.bi-sun').style.display = 'inline';
+    } else {
+      body.classList.remove('dark-mode');
+      navbar.classList.remove('navbar-dark-mode', 'navbar-dark');
+      navbar.classList.add('bg-light', 'navbar-light');
+      offcanvas.classList.remove('offcanvas-dark');
+      toggleBtn.querySelector('.bi-moon').style.display = 'inline';
+      toggleBtn.querySelector('.bi-sun').style.display = 'none';
+    }
+  }
+
+  // Load state
+  const dark = localStorage.getItem('darkMode') === 'true';
+  setDarkMode(dark);
+
+  toggleBtn.addEventListener('click', () => {
+    const isDark = !body.classList.contains('dark-mode');
+    setDarkMode(isDark);
+    localStorage.setItem('darkMode', isDark);
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
