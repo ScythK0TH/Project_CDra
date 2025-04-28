@@ -75,6 +75,32 @@ const validateEditUser = [
             });
         }
 
+        // Check if the role exists
+        try {
+            const roleExists = await UserModel.getRolesById(req.body.role_id);
+            console.log('Role exists:', roleExists);
+            console.log('Role Length:', roleExists.length);
+            
+            if (roleExists.length === 0) {
+            return res.render('users/edit', {
+                errors: [{ msg: 'Role does not exist' }],
+                oldInput: {
+                    email: req.body.email || '',
+                    userid: req.body.userid || '',
+                    username: req.body.username || '',
+                    password: req.body.password || '',
+                    role_id: req.body.role_id || ''
+                },
+                roles: roles,
+                actionUrl: `/users/edit/${req.body.userid}`,
+            });
+            }
+        } catch (err) {
+            // console.error('Error checking role existence:', err.message);
+            return res.status(500).send('Internal Server Error');
+        }
+
+
         // Log validation errors for debugging
         // console.log('Validation errors:', validationResult(req).array());
 
